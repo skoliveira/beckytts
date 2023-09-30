@@ -1,0 +1,40 @@
+{
+  "name": "beckytts",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16.11.0"
+  },
+  "description": "This Discord Text-to-Speech (TTS) application was designed to assist individuals with speech difficulties or those unable to speak at the moment. It quickly converts text messages into natural-sounding speech, ensuring that everyone's voice can be heard and understood.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skoliveira/beckytts.git"
+  },
+  "keywords": [
+    "text-to-speech",
+    "discord",
+    "discordapp",
+    "discord-bot",
+    "aac",
+    "tts",
+    "augmentative-communication"
+  ],
+  "author": "Samuel König de Oliveira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/skoliveira/beckytts/issues"
+  },
+  "homepage": "https://github.com/skoliveira/beckytts#readme",
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0"
+  }
+}
