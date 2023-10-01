@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
-import config from './config.js';
+import { DISCORD_TOKEN } from './config.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
@@ -9,35 +9,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
 // Command handling
-client.commands = new Collection();
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
-for (const folder of commandFolders) {
-	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-	for (const file of commandFiles) {
-		const filePath = path.join(commandsPath, file);
-		const command = require(filePath);
-		// Set a new item in the Collection with the key as the command name and the value as the exported module
-		if ('data' in command && 'execute' in command) {
-			client.commands.set(command.data.name, command);
-		}
-		else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+(async c => {
+	client.commands = new Collection();
+	const foldersPath = path.join(__dirname, 'commands');
+	const commandFolders = fs.readdirSync(foldersPath);
+	for (const folder of commandFolders) {
+		const commandsPath = path.join(foldersPath, folder);
+		const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+		for (const file of commandFiles) {
+			const filePath = path.join(commandsPath, file);
+			const { 'default': command } = await import(filePath);
+			// Set a new item in the Collection with the key as the command name and the value as the exported module
+			if ('data' in command && 'execute' in command) {
+				c.commands.set(command.data.name, command);
+			}
+			else {
+				console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+			}
 		}
 	}
-}
+})(client);
 
 // Event handling
-(async (c) => {
+(async c => {
 	const eventsPath = path.join(__dirname, 'events');
 	const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 	for (const file of eventFiles) {
 		const filePath = path.join(eventsPath, file);
-		const { default:event } = await import(filePath);
+		const { 'default': event } = await import(filePath);
 		if (event.once) {
 			c.once(event.name, (...args) => event.execute(...args));
 		}
@@ -48,4 +50,4 @@ for (const folder of commandFolders) {
 })(client);
 
 // Log in to Discord with your client's token
-client.login(config.DISCORD_TOKEN);
+client.login(DISCORD_TOKEN);

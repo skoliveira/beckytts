@@ -8,7 +8,9 @@
   "description": "This Discord Text-to-Speech (TTS) application was designed to assist individuals with speech difficulties or those unable to speak at the moment. It quickly converts text messages into natural-sounding speech, ensuring that everyone's voice can be heard and understood.",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node .",
+    "deploy": "node src/deploy-commands.js",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,8 +33,10 @@
   },
   "homepage": "https://github.com/skoliveira/beckytts#readme",
   "dependencies": {
+    "@discordjs/voice": "^0.16.0",
     "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "libsodium-wrappers": "^0.7.13"
   },
   "devDependencies": {
     "eslint": "^8.50.0"
