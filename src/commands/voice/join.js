@@ -40,7 +40,7 @@ export default {
 				.setName('channel')
 				.setNameLocalizations({
 					'da': 'talekanal',			// Danish
-					'de': 'Sprachkanal',		// German
+					'de': 'sprachkanal',		// German
 					'es-ES': 'canal',			// SpanishES
 					'fr': 'salon',				// French
 					'hr': 'kanal',				// Croatian
