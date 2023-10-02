@@ -115,7 +115,7 @@ export default {
 					'it': `Non ho il permesso di unirmi a ${channel}`,
 					'lt': `Mano netenkama leidimo prisijungti prie ${channel}.`,
 					'hu': `${channel} hangcsatornához nincs jogosultságom csatlakozni.`,
-					'nl': `Vanwege een gebrek aan toestemming kan ik niet lid worden van de ${channel}`,
+					'nl': `Vanwege een gebrek aan toestemming kan ik niet deelnemen aan de ${channel}`,
 					'no': `Jeg har ikke tillatelse til å bli med i ${channel}`,
 					'pl': `Nie mam pozwolenia, aby dołączyć do ${channel}`,
 					'pt-BR': `Não tenho permissão para entrar em ${channel}`,
