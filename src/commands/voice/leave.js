@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { getVoiceConnection } from '@discordjs/voice';
+import { getVoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 
 export default {
 	data: new SlashCommandBuilder()
@@ -12,12 +12,17 @@ export default {
 			.then(fetchedMember => { return fetchedMember.voice; })
 			.catch(console.error);
 		if (voice.channelId) {
-			await interaction.editReply({
-				content: `Left the ${voice.channel}`,
-				ephemeral: true,
-			});
 			const connection = getVoiceConnection(interaction.guild.id);
-			connection.destroy();
+			connection.once(VoiceConnectionStatus.Disconnected, async () => {
+				await interaction.editReply({
+					content: `I left the ${voice.channel}`,
+					ephemeral: true,
+				});
+				if (connection && connection.state.status !== VoiceConnectionStatus.Destroyed) {
+					connection.destroy();
+				}
+			});
+			connection.disconnect();
 		}
 		else {
 			await interaction.editReply({
