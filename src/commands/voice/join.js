@@ -102,6 +102,9 @@ export default {
 				.addChannelTypes(ChannelType.GuildVoice)
 				.setRequired(false)),
 	async execute(interaction) {
+
+		await interaction.deferReply({ ephemeral: true });
+
 		async function join(channel) {
 			// Check permissions
 			const permissions = channel.permissionsFor(interaction.guild.members.me);
@@ -142,13 +145,8 @@ export default {
 				});
 				return;
 			}
-			// Connecting...
-			const connection = joinVoiceChannel({
-				channelId: channel.id,
-				guildId: channel.guild.id,
-				adapterCreator: channel.guild.voiceAdapterCreator,
-			});
-			connection.once(VoiceConnectionStatus.Ready, async () => {
+
+			async function notifyConnection() {
 				const locales = {
 					'da': `Jeg har tilsluttet mig ${channel}`,
 					'de': `${channel} habe ich betreten.`,
@@ -183,10 +181,28 @@ export default {
 					content: locales[interaction.locale] ?? `I joined the ${channel}`,
 					ephemeral: true,
 				});
+			}
+
+			const meId = interaction.guild.members.me.id;
+			const voice = await interaction.guild.members.fetch({ user: meId, force: true })
+				.then(fetchedMember => { return fetchedMember.voice; })
+				.catch(console.error);
+			// If it's already connected to the same channel
+			if (voice.channelId && voice.channelId === channel.id) {
+				notifyConnection();
+				return;
+			}
+
+			// Connecting...
+			const connection = joinVoiceChannel({
+				channelId: channel.id,
+				guildId: channel.guild.id,
+				adapterCreator: channel.guild.voiceAdapterCreator,
+			});
+			connection.once(VoiceConnectionStatus.Ready, async () => {
+				notifyConnection();
 			});
 		}
-
-		await interaction.deferReply({ ephemeral: true });
 
 		const targetChannel = interaction.options.getChannel('channel');
 		if (!targetChannel) {
