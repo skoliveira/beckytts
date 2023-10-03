@@ -190,7 +190,7 @@ export default {
 				.catch(console.error);
 			// If it's already connected to the same channel
 			if (voice.channelId && voice.channelId === channel.id) {
-				notifyConnection();
+				await notifyConnection();
 				return;
 			}
 
@@ -201,7 +201,7 @@ export default {
 				adapterCreator: channel.guild.voiceAdapterCreator,
 			});
 			connection.once(VoiceConnectionStatus.Ready, async () => {
-				notifyConnection();
+				await notifyConnection();
 			});
 		}
 
@@ -246,11 +246,11 @@ export default {
 			}
 
 			// Join the voice channel the user is in.
-			join(interaction.member.voice.channel);
+			await join(interaction.member.voice.channel);
 			return;
 		}
 
 		// Join the requested voice channel.
-		join(targetChannel);
+		await join(targetChannel);
 	},
 };
