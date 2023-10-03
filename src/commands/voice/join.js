@@ -35,6 +35,7 @@ export default {
 			'zh-TW': '讓機器人加入當前的語音頻道或指定的語音頻道。',
 			'ko': '봇이 현재 음성 채널 또는 지정된 음성 채널에 참가하도록 만듭니다.',
 		})
+		.setDMPermission(false)
 		.addChannelOption(option =>
 			option
 				.setName('channel')

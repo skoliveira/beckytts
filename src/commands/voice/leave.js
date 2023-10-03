@@ -34,7 +34,8 @@ export default {
 			'ja': 'ボットを現在のボイスチャンネルから出させる。',
 			'zh-TW': '将机器人退出其当前的语音频道。',
 			'ko': '이 명령은 봇이 현재 음성 채널에서 나가도록합니다.',
-		}),
+		})
+		.setDMPermission(false),
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		const meId = interaction.client.user.id;
