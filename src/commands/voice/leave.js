@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { getVoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
+import { getVoiceConnection, joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
 
 export default {
 	data: new SlashCommandBuilder()
@@ -37,89 +37,114 @@ export default {
 		})
 		.setDMPermission(false),
 	async execute(interaction) {
+
+		async function notify(channel) {
+			const locales = {
+				'da': `Jeg forlod ${channel}`,
+				'de': `Ich bin nicht mehr im ${channel}`,
+				'es-ES': `Salí del ${channel}`,
+				'fr': `J'ai quitté le ${channel}`,
+				'hr': `Napustila sam ${channel}`,
+				'it': `Ho lasciato il ${channel}`,
+				'lt': `Palikau ${channel}`,
+				'hu': `${channel}-t elhagytam.`,
+				'nl': `${channel} heb ik verlaten.`,
+				'no': `Jeg forlot ${channel}`,
+				'pl': `Opuściłam kanał głosowy ${channel}`,
+				'pt-BR': `Eu saí de ${channel}`,
+				'ro': `Am părăsit ${channel}`,
+				'fi': `Jätin ${channel}`,
+				'sv-SE': `Jag lämnade ${channel}`,
+				'vi': `Tôi đã rời khỏi ${channel}`,
+				'tr': `${channel} kanalından ayrıldım.`,
+				'cs': `Opustila jsem ${channel}`,
+				'el': `Έφυγα από το ${channel}`,
+				'bg': `Напуснах ${channel}`,
+				'ru': `Я покинула ${channel}`,
+				'uk': `Я покинула ${channel}`,
+				'hi': `${channel} मैंने छोड़ दिया।`,
+				'th': `ฉันออกจาก ${channel}`,
+				'zh-CN': `我离开了 ${channel}`,
+				'ja': `${channel} を退出しました`,
+				'zh-TW': `我離開了 ${channel}`,
+				'ko': `${channel}에서 나갔습니다`,
+			};
+			await interaction.editReply({
+				content: locales[interaction.locale] ?? `I left the ${channel}`,
+				ephemeral: true,
+			});
+
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 		const meId = interaction.client.user.id;
 		const voice = await interaction.guild.members.fetch({ user: meId, force: true })
 			.then(fetchedMember => { return fetchedMember.voice; })
 			.catch(console.error);
-		if (voice.channelId) {
-			const connection = getVoiceConnection(interaction.guild.id);
-			connection.once(VoiceConnectionStatus.Disconnected, async () => {
+		let connection = getVoiceConnection(interaction.guild.id);
+		if (!connection) {
+			if (!voice.channelId) {
 				const locales = {
-					'da': `Jeg forlod ${voice.channel}`,
-					'de': `Ich bin nicht mehr im ${voice.channel}`,
-					'es-ES': `Salí del ${voice.channel}`,
-					'fr': `J'ai quitté le ${voice.channel}`,
-					'hr': `Napustila sam ${voice.channel}`,
-					'it': `Ho lasciato il ${voice.channel}`,
-					'lt': `Palikau ${voice.channel}`,
-					'hu': `${voice.channel}-t elhagytam.`,
-					'nl': `${voice.channel} heb ik verlaten.`,
-					'no': `Jeg forlot ${voice.channel}`,
-					'pl': `Opuściłam kanał głosowy ${voice.channel}`,
-					'pt-BR': `Eu saí de ${voice.channel}`,
-					'ro': `Am părăsit ${voice.channel}`,
-					'fi': `Jätin ${voice.channel}`,
-					'sv-SE': `Jag lämnade ${voice.channel}`,
-					'vi': `Tôi đã rời khỏi ${voice.channel}`,
-					'tr': `${voice.channel} kanalından ayrıldım.`,
-					'cs': `Opustila jsem ${voice.channel}`,
-					'el': `Έφυγα από το ${voice.channel}`,
-					'bg': `Напуснах ${voice.channel}`,
-					'ru': `Я покинула ${voice.channel}`,
-					'uk': `Я покинула ${voice.channel}`,
-					'hi': `${voice.channel} मैंने छोड़ दिया।`,
-					'th': `ฉันออกจาก ${voice.channel}`,
-					'zh-CN': `我离开了 ${voice.channel}`,
-					'ja': `${voice.channel} を退出しました`,
-					'zh-TW': `我離開了 ${voice.channel}`,
-					'ko': `${voice.channel}에서 나갔습니다`,
+					'da': 'Jeg er ikke i nogen talekanal.',
+					'de': 'Ich bin in keinem Sprachkanal.',
+					'es-ES': 'No estoy en ningún canal de voz.',
+					'fr': 'Je ne suis dans aucun salon vocal.',
+					'hr': 'Nisam u nijednom glasovnom kanalu.',
+					'it': 'Non sono in nessun canale vocale.',
+					'lt': 'Aš ne esu jokio balso kanale.',
+					'hu': 'Nem vagyok egyetlen hangcsatornában sem.',
+					'nl': 'Ik ben niet in een spraakkanaal.',
+					'no': 'Jeg er ikke i noen talekanal.',
+					'pl': 'Nie jestem w żadnym kanale głosowym.',
+					'pt-BR': 'Não estou em nenhum canal de voz.',
+					'ro': 'Nu sunt în niciun canal vocal.',
+					'fi': 'En ole missään puhekanavassa.',
+					'sv-SE': 'Jag är inte i någon röstkanal.',
+					'vi': 'Tôi không ở trong bất kỳ kênh thoại nào.',
+					'tr': 'Hiçbir ses kanalında değilim.',
+					'cs': 'Nejsem v žádném hlasovém kanálu.',
+					'el': 'Δεν βρίσκομαι σε κανένα κανάλι ομιλίας.',
+					'bg': 'Не съм в нито един гласов канал.',
+					'ru': 'Я не нахожусь в каком-либо голосовом канале.',
+					'uk': 'Я не знаходжусь в жодному голосовому каналі.',
+					'hi': 'मैं किसी भी आवाज़ चैनल में नहीं हूँ।',
+					'th': 'ฉันไม่ได้อยู่ในช่องเสียงใดๆ',
+					'zh-CN': '我不在任何语音频道中。',
+					'ja': '私はどのボイスチャンネルにもいません。',
+					'zh-TW': '我不在任何語音頻道中。',
+					'ko': '나는 어떤 음성 채널에도 있지 않습니다.',
 				};
 				await interaction.editReply({
-					content: locales[interaction.locale] ?? `I left the ${voice.channel}`,
+					content: locales[interaction.locale] ?? 'I am not in any voice channel.',
 					ephemeral: true,
 				});
+				return;
+			}
+
+			// Connect only to disconnect
+			connection = joinVoiceChannel({
+				channelId: voice.channel.id,
+				guildId: voice.channel.guild.id,
+				adapterCreator: voice.channel.guild.voiceAdapterCreator,
+			});
+			connection.once(VoiceConnectionStatus.Disconnected, async () => {
+				await notify(voice.channel);
 				if (connection && connection.state.status !== VoiceConnectionStatus.Destroyed) {
 					connection.destroy();
 				}
 			});
-			connection.disconnect();
-		}
-		else {
-			const locales = {
-				'da': 'Jeg er ikke i nogen talekanal.',
-				'de': 'Ich bin in keinem Sprachkanal.',
-				'es-ES': 'No estoy en ningún canal de voz.',
-				'fr': 'Je ne suis dans aucun salon vocal.',
-				'hr': 'Nisam u nijednom glasovnom kanalu.',
-				'it': 'Non sono in nessun canale vocale.',
-				'lt': 'Aš ne esu jokio balso kanale.',
-				'hu': 'Nem vagyok egyetlen hangcsatornában sem.',
-				'nl': 'Ik ben niet in een spraakkanaal.',
-				'no': 'Jeg er ikke i noen talekanal.',
-				'pl': 'Nie jestem w żadnym kanale głosowym.',
-				'pt-BR': 'Não estou em nenhum canal de voz.',
-				'ro': 'Nu sunt în niciun canal vocal.',
-				'fi': 'En ole missään puhekanavassa.',
-				'sv-SE': 'Jag är inte i någon röstkanal.',
-				'vi': 'Tôi không ở trong bất kỳ kênh thoại nào.',
-				'tr': 'Hiçbir ses kanalında değilim.',
-				'cs': 'Nejsem v žádném hlasovém kanálu.',
-				'el': 'Δεν βρίσκομαι σε κανένα κανάλι ομιλίας.',
-				'bg': 'Не съм в нито един гласов канал.',
-				'ru': 'Я не нахожусь в каком-либо голосовом канале.',
-				'uk': 'Я не знаходжусь в жодному голосовому каналі.',
-				'hi': 'मैं किसी भी आवाज़ चैनल में नहीं हूँ।',
-				'th': 'ฉันไม่ได้อยู่ในช่องเสียงใดๆ',
-				'zh-CN': '我不在任何语音频道中。',
-				'ja': '私はどのボイスチャンネルにもいません。',
-				'zh-TW': '我不在任何語音頻道中。',
-				'ko': '나는 어떤 음성 채널에도 있지 않습니다.',
-			};
-			await interaction.editReply({
-				content: locales[interaction.locale] ?? 'I am not in any voice channel.',
-				ephemeral: true,
+			connection.once(VoiceConnectionStatus.Ready, async () => {
+				connection.disconnect();
 			});
+			return;
 		}
+
+		connection.once(VoiceConnectionStatus.Disconnected, async () => {
+			await notify(voice.channel);
+			if (connection && connection.state.status !== VoiceConnectionStatus.Destroyed) {
+				connection.destroy();
+			}
+		});
+		connection.disconnect();
 	},
 };
