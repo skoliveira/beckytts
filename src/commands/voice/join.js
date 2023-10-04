@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChannelType, PermissionsBitField } from 'discord.js';
-import { joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
+import { getVoiceConnection, joinVoiceChannel, VoiceConnectionStatus } from '@discordjs/voice';
 
 export default {
 	data: new SlashCommandBuilder()
@@ -188,14 +188,19 @@ export default {
 			const voice = await interaction.guild.members.fetch({ user: meId, force: true })
 				.then(fetchedMember => { return fetchedMember.voice; })
 				.catch(console.error);
-			// If it's already connected to the same channel
-			if (voice.channelId && voice.channelId === channel.id) {
-				await notifyConnection();
-				return;
+
+			// Check if it's already connected
+			let connection = getVoiceConnection(interaction.guild.id);
+			if (connection) {
+				// If it's already in the same channel -> notfy and return
+				if (voice.channelId === channel.id) {
+					await notifyConnection();
+					return;
+				}
 			}
 
 			// Connecting...
-			const connection = joinVoiceChannel({
+			connection = joinVoiceChannel({
 				channelId: channel.id,
 				guildId: channel.guild.id,
 				adapterCreator: channel.guild.voiceAdapterCreator,
