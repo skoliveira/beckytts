@@ -103,8 +103,9 @@ export default {
 				.addChannelTypes(ChannelType.GuildVoice)
 				.setRequired(false)),
 	async execute(interaction) {
-
-		await interaction.deferReply({ ephemeral: true });
+		if (!interaction.deferred) {
+			await interaction.deferReply({ ephemeral: true });
+		}
 
 		async function join(channel) {
 			// Check permissions
@@ -148,6 +149,9 @@ export default {
 			}
 
 			async function notifyConnection() {
+				if (interaction.commandName !== 'join') {
+					return;
+				}
 				const locales = {
 					'da': `Jeg har tilsluttet mig ${channel}`,
 					'de': `${channel} habe ich betreten.`,
@@ -195,7 +199,7 @@ export default {
 				// If it's already in the same channel -> notfy and return
 				if (voice.channelId === channel.id) {
 					await notifyConnection();
-					return;
+					return connection;
 				}
 			}
 
@@ -208,6 +212,7 @@ export default {
 			connection.once(VoiceConnectionStatus.Ready, async () => {
 				await notifyConnection();
 			});
+			return connection;
 		}
 
 		const targetChannel = interaction.options.getChannel('channel');
@@ -251,11 +256,10 @@ export default {
 			}
 
 			// Join the voice channel the user is in.
-			await join(interaction.member.voice.channel);
-			return;
+			return await join(interaction.member.voice.channel);
 		}
 
 		// Join the requested voice channel.
-		await join(targetChannel);
+		return await join(targetChannel);
 	},
 };
