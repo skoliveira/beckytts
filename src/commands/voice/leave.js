@@ -68,9 +68,9 @@ export default {
 				'hi': `${channel} मैंने छोड़ दिया।`,
 				'th': `ฉันออกจาก ${channel}`,
 				'zh-CN': `我离开了 ${channel}`,
-				'ja': `${channel} を退出しました`,
+				'ja': `${channel} を退出しました。`,
 				'zh-TW': `我離開了 ${channel}`,
-				'ko': `${channel}에서 나갔습니다`
+				'ko': `${channel}에서 나갔습니다.`
 			};
 			await interaction.editReply({
 				content: locales[interaction.locale] ?? `I left the ${channel}`,

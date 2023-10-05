@@ -93,12 +93,12 @@ export default {
 					'bg': 'Гласовият канал, в който да се присъедините.',
 					'ru': 'Голосовой канал для присоединения.',
 					'uk': 'Голосовий канал для приєднання.',
-					'hi': 'जुड़ने के लिए आवाज़ चैनल',
+					'hi': 'जुड़ने के लिए आवाज़ चैनल।',
 					'th': 'ช่องเสียงที่ต้องการเข้าร่วม',
-					'zh-CN': '要加入的语音频道',
-					'ja': '参加する音声チャンネル',
-					'zh-TW': '要加入的語音頻道',
-					'ko': '참여할 음성 채널'
+					'zh-CN': '要加入的语音频道。',
+					'ja': '参加する音声チャンネル。',
+					'zh-TW': '要加入的語音頻道。',
+					'ko': '참여할 음성 채널.'
 				})
 				.addChannelTypes(ChannelType.GuildVoice)
 				.setRequired(false)),
@@ -142,12 +142,12 @@ export default {
 					'bg': `Нямам разрешение да се присъединя към ${channel}`,
 					'ru': `У меня нет разрешения на присоединение к ${channel}`,
 					'uk': `У мене немає дозволу приєднатися до ${channel}`,
-					'hi': `${channel} में शामिल होने की मेरी अनुमति नहीं है`,
+					'hi': `${channel} में शामिल होने की मेरी अनुमति नहीं है।`,
 					'th': `ฉันไม่มีสิทธิ์เข้าร่วม ${channel}`,
 					'zh-CN': `我没有权限加入${channel}`,
-					'ja': `${channel}に参加する権限がありません`,
+					'ja': `${channel}に参加する権限がありません。`,
 					'zh-TW': `我沒有權限加入${channel}`,
-					'ko': `${channel}에 참여할 권한이 없습니다`
+					'ko': `${channel}에 참여할 권한이 없습니다.`
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? `I don't have permission to join the ${channel}`,
@@ -177,7 +177,7 @@ export default {
 					'fi': `Liityin kanavalle ${channel}`,
 					'sv-SE': `Jag gick med i ${channel}`,
 					'vi': `Tôi đã tham gia vào ${channel}`,
-					'tr': `${channel} kanalına katıldım`,
+					'tr': `${channel} kanalına katıldım.`,
 					'cs': `Připojila jsem se k ${channel}`,
 					'el': `Εντάχθηκα στο ${channel}`,
 					'bg': `Присъединих се към ${channel}`,
@@ -186,9 +186,9 @@ export default {
 					'hi': `${channel} में मैं शामिल हो गया।`,
 					'th': `ฉันเข้าร่วม ${channel}`,
 					'zh-CN': `我加入了${channel}`,
-					'ja': `${channel} に参加しました`,
+					'ja': `${channel} に参加しました。`,
 					'zh-TW': `我加入了${channel}`,
-					'ko': `${channel}에 가입했습니다`
+					'ko': `${channel}에 가입했습니다.`
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? `I joined the ${channel}`,
