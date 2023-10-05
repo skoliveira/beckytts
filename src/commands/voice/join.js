@@ -108,9 +108,17 @@ export default {
 		}
 
 		async function join(channel) {
+			const meId = interaction.client.user.id;
+			const me = await interaction.guild.members.fetch({ user: meId, force: true })
+				.then(fetchedMember => { return fetchedMember; })
+				.catch(console.error);
+
 			// Check permissions
-			const permissions = channel.permissionsFor(interaction.guild.members.me);
-			if (!permissions.has(PermissionsBitField.Flags.Connect)) {
+			const permissions = me.permissionsIn(channel);
+			if (!permissions.has([
+				PermissionsBitField.Flags.ViewChannel,
+				PermissionsBitField.Flags.Connect,
+			])) {
 				const locales = {
 					'da': `Jeg har ikke tilladelse til at deltage i ${channel}`,
 					'de': `${channel} kann ich aufgrund fehlender Berechtigungen nicht betreten.`,
@@ -188,16 +196,11 @@ export default {
 				});
 			}
 
-			const meId = interaction.guild.members.me.id;
-			const voice = await interaction.guild.members.fetch({ user: meId, force: true })
-				.then(fetchedMember => { return fetchedMember.voice; })
-				.catch(console.error);
-
 			// Check if it's already connected
 			let connection = getVoiceConnection(interaction.guild.id);
 			if (connection) {
 				// If it's already in the same channel -> notfy and return
-				if (voice.channelId === channel.id) {
+				if (me.voice.channelId === channel.id) {
 					await notifyConnection();
 					return connection;
 				}
