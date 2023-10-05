@@ -56,11 +56,11 @@ export default {
 					'zh-CN': `请稍等，您正在\`${command.data.name}\`的冷却时间内。您可以在 <t:${expiredTimestamp}:R> 后再次使用它。`,
 					'ja': `お待ちください、\`${command.data.name}\` のクールダウン中です。 <t:${expiredTimestamp}:R> 後に再度使用できます。`,
 					'zh-TW': `請稍候，您正在\`${command.data.name}\`的冷卻時間內。您可以在 <t:${expiredTimestamp}:R> 後再次使用它。`,
-					'ko': `기다려주세요, \`${command.data.name}\`에 대한 쿨다운 중입니다. <t:${expiredTimestamp}:R> 후에 다시 사용할 수 있습니다.`,
+					'ko': `기다려주세요, \`${command.data.name}\`에 대한 쿨다운 중입니다. <t:${expiredTimestamp}:R> 후에 다시 사용할 수 있습니다.`
 				};
 				return interaction.reply({
 					content: locales[interaction.locale] ?? `Please wait, you are on a cooldown for \`${command.data.name}\`. You can use it again <t:${expiredTimestamp}:R>.`,
-					ephemeral: true,
+					ephemeral: true
 				});
 			}
 		}
@@ -75,5 +75,5 @@ export default {
 			console.error(`Error executing ${interaction.commandName}`);
 			console.error(error);
 		}
-	},
+	}
 };

@@ -33,7 +33,7 @@ export default {
 			'zh-CN': '让机器人加入当前的语音频道或指定的语音频道。',
 			'ja': 'ボットを現在のボイスチャンネルまたは指定されたボイスチャンネルに参加させてください。',
 			'zh-TW': '讓機器人加入當前的語音頻道或指定的語音頻道。',
-			'ko': '봇이 현재 음성 채널 또는 지정된 음성 채널에 참가하도록 만듭니다.',
+			'ko': '봇이 현재 음성 채널 또는 지정된 음성 채널에 참가하도록 만듭니다.'
 		})
 		.setDMPermission(false)
 		.addChannelOption(option =>
@@ -67,7 +67,7 @@ export default {
 					'zh-CN': '语音频道',		// ChineseCN
 					'ja': 'ボイスチャンネル',	// Japanese
 					'zh-TW': '語音頻道',		// ChineseTW
-					'ko': '채널',				// Korean
+					'ko': '채널'				// Korean
 				})
 				.setDescription('The voice channel to join into.')
 				.setDescriptionLocalizations({
@@ -98,7 +98,7 @@ export default {
 					'zh-CN': '要加入的语音频道',
 					'ja': '参加する音声チャンネル',
 					'zh-TW': '要加入的語音頻道',
-					'ko': '참여할 음성 채널',
+					'ko': '참여할 음성 채널'
 				})
 				.addChannelTypes(ChannelType.GuildVoice)
 				.setRequired(false)),
@@ -117,7 +117,7 @@ export default {
 			const permissions = me.permissionsIn(channel);
 			if (!permissions.has([
 				PermissionsBitField.Flags.ViewChannel,
-				PermissionsBitField.Flags.Connect,
+				PermissionsBitField.Flags.Connect
 			])) {
 				const locales = {
 					'da': `Jeg har ikke tilladelse til at deltage i ${channel}`,
@@ -147,11 +147,11 @@ export default {
 					'zh-CN': `我没有权限加入${channel}`,
 					'ja': `${channel}に参加する権限がありません`,
 					'zh-TW': `我沒有權限加入${channel}`,
-					'ko': `${channel}에 참여할 권한이 없습니다`,
+					'ko': `${channel}에 참여할 권한이 없습니다`
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? `I don't have permission to join the ${channel}`,
-					ephemeral: true,
+					ephemeral: true
 				});
 				return;
 			}
@@ -188,11 +188,11 @@ export default {
 					'zh-CN': `我加入了${channel}`,
 					'ja': `${channel} に参加しました`,
 					'zh-TW': `我加入了${channel}`,
-					'ko': `${channel}에 가입했습니다`,
+					'ko': `${channel}에 가입했습니다`
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? `I joined the ${channel}`,
-					ephemeral: true,
+					ephemeral: true
 				});
 			}
 
@@ -210,7 +210,7 @@ export default {
 			connection = joinVoiceChannel({
 				channelId: channel.id,
 				guildId: channel.guild.id,
-				adapterCreator: channel.guild.voiceAdapterCreator,
+				adapterCreator: channel.guild.voiceAdapterCreator
 			});
 			connection.once(VoiceConnectionStatus.Ready, async () => {
 				await notifyConnection();
@@ -249,11 +249,11 @@ export default {
 					'zh-CN': '您必须首先加入一个语音频道或明确指定语音频道。',
 					'ja': '最初に音声チャンネルに参加するか、音声チャンネルを明示的に指定する必要があります。',
 					'zh-TW': '您必須首先加入一個語音頻道或明確指定語音頻道。',
-					'ko': '먼저 음성 채널에 참가하거나 명시적으로 음성 채널을 지정해야 합니다.',
+					'ko': '먼저 음성 채널에 참가하거나 명시적으로 음성 채널을 지정해야 합니다.'
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? 'You must first join a voice channel or explicitly specify the voice channel.',
-					ephemeral: true,
+					ephemeral: true
 				});
 				return;
 			}
@@ -264,5 +264,5 @@ export default {
 
 		// Join the requested voice channel.
 		return await join(targetChannel);
-	},
+	}
 };

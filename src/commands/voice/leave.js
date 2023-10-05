@@ -33,7 +33,7 @@ export default {
 			'zh-CN': '使机器人离开其当前的语音频道。',
 			'ja': 'ボットを現在のボイスチャンネルから出させる。',
 			'zh-TW': '将机器人退出其当前的语音频道。',
-			'ko': '이 명령은 봇이 현재 음성 채널에서 나가도록합니다.',
+			'ko': '이 명령은 봇이 현재 음성 채널에서 나가도록합니다.'
 		})
 		.setDMPermission(false),
 	async execute(interaction) {
@@ -67,11 +67,11 @@ export default {
 				'zh-CN': `我离开了 ${channel}`,
 				'ja': `${channel} を退出しました`,
 				'zh-TW': `我離開了 ${channel}`,
-				'ko': `${channel}에서 나갔습니다`,
+				'ko': `${channel}에서 나갔습니다`
 			};
 			await interaction.editReply({
 				content: locales[interaction.locale] ?? `I left the ${channel}`,
-				ephemeral: true,
+				ephemeral: true
 			});
 
 		}
@@ -112,11 +112,11 @@ export default {
 					'zh-CN': '我不在任何语音频道中。',
 					'ja': '私はどのボイスチャンネルにもいません。',
 					'zh-TW': '我不在任何語音頻道中。',
-					'ko': '나는 어떤 음성 채널에도 있지 않습니다.',
+					'ko': '나는 어떤 음성 채널에도 있지 않습니다.'
 				};
 				await interaction.editReply({
 					content: locales[interaction.locale] ?? 'I am not in any voice channel.',
-					ephemeral: true,
+					ephemeral: true
 				});
 				return;
 			}
@@ -125,7 +125,7 @@ export default {
 			connection = joinVoiceChannel({
 				channelId: voice.channel.id,
 				guildId: voice.channel.guild.id,
-				adapterCreator: voice.channel.guild.voiceAdapterCreator,
+				adapterCreator: voice.channel.guild.voiceAdapterCreator
 			});
 			connection.once(VoiceConnectionStatus.Disconnected, async () => {
 				await notify(voice.channel);
@@ -146,5 +146,5 @@ export default {
 			}
 		});
 		connection.disconnect();
-	},
+	}
 };

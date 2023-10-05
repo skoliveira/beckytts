@@ -44,7 +44,7 @@ const __dirname = path.dirname(__filename);
 			// The put method is used to fully refresh all commands with the current set
 			const data = await rest.put(
 				Routes.applicationCommands(DISCORD_APPLICATION_ID),
-				{ body: commands },
+				{ body: commands }
 			);
 
 			console.log(`Successfully reloaded ${data.length} application (/) commands.`);
