@@ -37,6 +37,9 @@ export default {
 		})
 		.setDMPermission(false),
 	async execute(interaction) {
+		if (!interaction.deferred) {
+			await interaction.deferReply({ ephemeral: true });
+		}
 
 		async function notify(channel) {
 			const locales = {
@@ -76,52 +79,52 @@ export default {
 
 		}
 
-		await interaction.deferReply({ ephemeral: true });
 		const meId = interaction.client.user.id;
 		const voice = await interaction.guild.members.fetch({ user: meId, force: true })
 			.then(fetchedMember => { return fetchedMember.voice; })
 			.catch(console.error);
 		let connection = getVoiceConnection(interaction.guild.id);
-		if (!connection) {
-			if (!voice.channelId) {
-				const locales = {
-					'da': 'Jeg er ikke i nogen talekanal.',
-					'de': 'Ich bin in keinem Sprachkanal.',
-					'es-ES': 'No estoy en ningún canal de voz.',
-					'fr': 'Je ne suis dans aucun salon vocal.',
-					'hr': 'Nisam u nijednom glasovnom kanalu.',
-					'it': 'Non sono in nessun canale vocale.',
-					'lt': 'Aš ne esu jokio balso kanale.',
-					'hu': 'Nem vagyok egyetlen hangcsatornában sem.',
-					'nl': 'Ik ben niet in een spraakkanaal.',
-					'no': 'Jeg er ikke i noen talekanal.',
-					'pl': 'Nie jestem w żadnym kanale głosowym.',
-					'pt-BR': 'Não estou em nenhum canal de voz.',
-					'ro': 'Nu sunt în niciun canal vocal.',
-					'fi': 'En ole missään puhekanavassa.',
-					'sv-SE': 'Jag är inte i någon röstkanal.',
-					'vi': 'Tôi không ở trong bất kỳ kênh thoại nào.',
-					'tr': 'Hiçbir ses kanalında değilim.',
-					'cs': 'Nejsem v žádném hlasovém kanálu.',
-					'el': 'Δεν βρίσκομαι σε κανένα κανάλι ομιλίας.',
-					'bg': 'Не съм в нито един гласов канал.',
-					'ru': 'Я не нахожусь в каком-либо голосовом канале.',
-					'uk': 'Я не знаходжусь в жодному голосовому каналі.',
-					'hi': 'मैं किसी भी आवाज़ चैनल में नहीं हूँ।',
-					'th': 'ฉันไม่ได้อยู่ในช่องเสียงใดๆ',
-					'zh-CN': '我不在任何语音频道中。',
-					'ja': '私はどのボイスチャンネルにもいません。',
-					'zh-TW': '我不在任何語音頻道中。',
-					'ko': '나는 어떤 음성 채널에도 있지 않습니다.'
-				};
-				await interaction.editReply({
-					content: locales[interaction.locale] ?? 'I am not in any voice channel.',
-					ephemeral: true
-				});
-				return;
-			}
+		if (!voice.channelId) {
+			if (connection) { connection.destroy();	}
+			const locales = {
+				'da': 'Jeg er ikke i nogen talekanal.',
+				'de': 'Ich bin in keinem Sprachkanal.',
+				'es-ES': 'No estoy en ningún canal de voz.',
+				'fr': 'Je ne suis dans aucun salon vocal.',
+				'hr': 'Nisam u nijednom glasovnom kanalu.',
+				'it': 'Non sono in nessun canale vocale.',
+				'lt': 'Aš ne esu jokio balso kanale.',
+				'hu': 'Nem vagyok egyetlen hangcsatornában sem.',
+				'nl': 'Ik ben niet in een spraakkanaal.',
+				'no': 'Jeg er ikke i noen talekanal.',
+				'pl': 'Nie jestem w żadnym kanale głosowym.',
+				'pt-BR': 'Não estou em nenhum canal de voz.',
+				'ro': 'Nu sunt în niciun canal vocal.',
+				'fi': 'En ole missään puhekanavassa.',
+				'sv-SE': 'Jag är inte i någon röstkanal.',
+				'vi': 'Tôi không ở trong bất kỳ kênh thoại nào.',
+				'tr': 'Hiçbir ses kanalında değilim.',
+				'cs': 'Nejsem v žádném hlasovém kanálu.',
+				'el': 'Δεν βρίσκομαι σε κανένα κανάλι ομιλίας.',
+				'bg': 'Не съм в нито един гласов канал.',
+				'ru': 'Я не нахожусь в каком-либо голосовом канале.',
+				'uk': 'Я не знаходжусь в жодному голосовому каналі.',
+				'hi': 'मैं किसी भी आवाज़ चैनल में नहीं हूँ।',
+				'th': 'ฉันไม่ได้อยู่ในช่องเสียงใดๆ',
+				'zh-CN': '我不在任何语音频道中。',
+				'ja': '私はどのボイスチャンネルにもいません。',
+				'zh-TW': '我不在任何語音頻道中。',
+				'ko': '나는 어떤 음성 채널에도 있지 않습니다.'
+			};
+			await interaction.editReply({
+				content: locales[interaction.locale] ?? 'I am not in any voice channel.',
+				ephemeral: true
+			});
+			return;
+		}
 
-			// Connect only to disconnect
+		// Connect only to disconnect
+		if (!connection) {
 			connection = joinVoiceChannel({
 				channelId: voice.channel.id,
 				guildId: voice.channel.guild.id,
@@ -133,12 +136,13 @@ export default {
 					connection.destroy();
 				}
 			});
-			connection.once(VoiceConnectionStatus.Ready, async () => {
+			connection.once(VoiceConnectionStatus.Connecting, async () => {
 				connection.disconnect();
 			});
 			return;
 		}
 
+		// Just disconect
 		connection.once(VoiceConnectionStatus.Disconnected, async () => {
 			await notify(voice.channel);
 			if (connection && connection.state.status !== VoiceConnectionStatus.Destroyed) {
