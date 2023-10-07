@@ -156,52 +156,47 @@ export default {
 				return;
 			}
 
-			async function notifyConnection() {
-				if (interaction.commandName !== 'join') {
-					return;
-				}
-				const locales = {
-					'da': `Jeg har tilsluttet mig ${channel}`,
-					'de': `${channel} habe ich betreten.`,
-					'es-ES': `Me uní al ${channel}`,
-					'fr': `J'ai rejoint le ${channel}`,
-					'hr': `Pridružila sam se kanalu ${channel}`,
-					'it': `Mi sono unita al ${channel}`,
-					'lt': `Prisijungiau prie ${channel}`,
-					'hu': `Csatlakoztam a ${channel}`,
-					'nl': `Ik ben lid geworden van ${channel}`,
-					'no': `Jeg ble med i ${channel}`,
-					'pl': `Dołączyłam do ${channel}`,
-					'pt-BR': `Eu entrei em ${channel}`,
-					'ro': `Am intrat în ${channel}`,
-					'fi': `Liityin kanavalle ${channel}`,
-					'sv-SE': `Jag gick med i ${channel}`,
-					'vi': `Tôi đã tham gia vào ${channel}`,
-					'tr': `${channel} kanalına katıldım.`,
-					'cs': `Připojila jsem se k ${channel}`,
-					'el': `Εντάχθηκα στο ${channel}`,
-					'bg': `Присъединих се към ${channel}`,
-					'ru': `Я присоединилась к ${channel}`,
-					'uk': `Я приєдналася до ${channel}`,
-					'hi': `${channel} में मैं शामिल हो गया।`,
-					'th': `ฉันเข้าร่วม ${channel}`,
-					'zh-CN': `我加入了${channel}`,
-					'ja': `${channel} に参加しました。`,
-					'zh-TW': `我加入了${channel}`,
-					'ko': `${channel}에 가입했습니다.`
-				};
-				await interaction.editReply({
-					content: locales[interaction.locale] ?? `I joined the ${channel}`,
-					ephemeral: true
-				});
-			}
-
 			// Check if it's already connected
 			let connection = getVoiceConnection(interaction.guild.id);
 			if (connection) {
 				// If it's already in the same channel -> notfy and return
 				if (me.voice.channelId === channel.id) {
-					await notifyConnection();
+					if (interaction.commandName === 'join') {
+						const locales = {
+							'da': `Jeg er allerede i ${channel}`,
+							'de': `Ich bin bereits im ${channel}`,
+							'es-ES': `Ya estoy en ${channel}`,
+							'fr': `Je suis déjà en ${channel}`,
+							'hr': `Već sam u ${channel}`,
+							'it': `Sono già in ${channel}`,
+							'lt': `Aš jau esu ${channel}`,
+							'hu': `Már benne vagyok a ${channel}`,
+							'nl': `Ik ben al in het ${channel}`,
+							'no': `Jeg er allerede i ${channel}`,
+							'pl': `Jestem już w ${channel}`,
+							'pt-BR': `Já estou em ${channel}`,
+							'ro': `Sunt deja în ${channel}`,
+							'fi': `Olen jo ${channel}`,
+							'sv-SE': `Jag är redan i ${channel}`,
+							'vi': `Tôi đã ở trong kênh âm thanh ${channel}`,
+							'tr': `Zaten kanaldayım, ${channel}`,
+							'cs': `Už jsem v ${channel}`,
+							'el': `Ήδη είμαι στο ${channel}`,
+							'bg': `Вече съм в ${channel}`,
+							'ru': `Я уже в ${channel}`,
+							'uk': `Я вже в ${channel}`,
+							'hi': `${channel} में मैं पहले से ही हूँ।`,
+							'th': `ฉันอยู่ในห้องเสียงช่อง ${channel}`,
+							'zh-CN': `${channel}我已经在了。`,
+							'ja': `${channel}にもういます。`,
+							'zh-TW': `${channel}我已經在了。`,
+							'ko': `${channel}에 이미 있어.`
+						};
+						await interaction.editReply({
+							content: locales[interaction.locale] ?? `I'm already in ${channel}`,
+							ephemeral: true
+						});
+					}
 					return connection;
 				}
 			}
@@ -213,7 +208,42 @@ export default {
 				adapterCreator: channel.guild.voiceAdapterCreator
 			});
 			connection.once(VoiceConnectionStatus.Ready, async () => {
-				await notifyConnection();
+				if (interaction.commandName === 'join') {
+					const locales = {
+						'da': `Jeg har tilsluttet mig ${channel}`,
+						'de': `${channel} habe ich betreten.`,
+						'es-ES': `Me uní al ${channel}`,
+						'fr': `J'ai rejoint le ${channel}`,
+						'hr': `Pridružila sam se kanalu ${channel}`,
+						'it': `Mi sono unita al ${channel}`,
+						'lt': `Prisijungiau prie ${channel}`,
+						'hu': `Csatlakoztam a ${channel}`,
+						'nl': `Ik ben lid geworden van ${channel}`,
+						'no': `Jeg ble med i ${channel}`,
+						'pl': `Dołączyłam do ${channel}`,
+						'pt-BR': `Eu entrei em ${channel}`,
+						'ro': `Am intrat în ${channel}`,
+						'fi': `Liityin kanavalle ${channel}`,
+						'sv-SE': `Jag gick med i ${channel}`,
+						'vi': `Tôi đã tham gia vào ${channel}`,
+						'tr': `${channel} kanalına katıldım.`,
+						'cs': `Připojila jsem se k ${channel}`,
+						'el': `Εντάχθηκα στο ${channel}`,
+						'bg': `Присъединих се към ${channel}`,
+						'ru': `Я присоединилась к ${channel}`,
+						'uk': `Я приєдналася до ${channel}`,
+						'hi': `${channel} में मैं शामिल हो गया।`,
+						'th': `ฉันเข้าร่วม ${channel}`,
+						'zh-CN': `我加入了${channel}`,
+						'ja': `${channel} に参加しました。`,
+						'zh-TW': `我加入了${channel}`,
+						'ko': `${channel}에 가입했습니다.`
+					};
+					await interaction.editReply({
+						content: locales[interaction.locale] ?? `I joined the ${channel}`,
+						ephemeral: true
+					});
+				}
 			});
 			return connection;
 		}
